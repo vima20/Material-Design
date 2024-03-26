@@ -1,32 +1,9 @@
-// App.js
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { Appbar, Provider as PaperProvider } from 'react-native-paper';
 
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Provider as PaperProvider } from 'react-native-paper';
-import Login from './screens/Login';
-
-const Stack = createStackNavigator();
-
-const App = () => {
-  return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={Login} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
-  );
-};
-
-
-// components/AppBar.js
-
-import React from 'react';
-import { Appbar } from 'react-native-paper';
-
-const AppBar = ({ title }) => {
+// Custom MainAppbar component
+const MainAppbar = ({ title }) => {
   return (
     <Appbar.Header>
       <Appbar.Content title={title} />
@@ -34,53 +11,33 @@ const AppBar = ({ title }) => {
   );
 };
 
-
-// screens/Login.js
-
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
-import AppBar from '../components/AppBar';
-
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const [errors, setErrors] = useState({});
 
-  const handleChange = (field, value) => {
-    setFormData((prevData) => ({ ...prevData, [field]: value }));
-  };
-
-  const handleLogin = () => {
-    // Validation logic (for example, check if fields are not empty)
-    if (!formData.username || !formData.password) {
-      setErrors({ username: 'Username is required', password: 'Password is required' });
-    } else {
-      // Perform login logic here
-      // For simplicity, just log the formData
-      console.log('Login data:', formData);
-    }
+  // Function to handle form submission
+  const handleSubmit = () => {
+    // Validation logic can be added here
+    console.log('Form submitted:', formData);
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <AppBar title="Login" />
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <MainAppbar title="Login" />
+      <View style={styles.formContainer}>
         <TextInput
+          style={styles.input}
           placeholder="Username"
+          onChangeText={(text) => setFormData({ ...formData, username: text })}
           value={formData.username}
-          onChangeText={(text) => handleChange('username', text)}
-          style={styles.input}
-          keyboardType="email-address"
-          error={!!errors.username}
         />
         <TextInput
-          placeholder="Password"
-          value={formData.password}
-          onChangeText={(text) => handleChange('password', text)}
           style={styles.input}
+          placeholder="Password"
+          onChangeText={(text) => setFormData({ ...formData, password: text })}
+          value={formData.password}
           secureTextEntry
-          error={!!errors.password}
         />
-        <Button onPress={handleLogin} title="Login" />
+        <Button title="Submit" onPress={handleSubmit} />
       </View>
     </View>
   );
@@ -88,15 +45,30 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   input: {
-    marginVertical: 8,
+    width: '100%',
+    marginBottom: 10,
+    padding: 10,
     borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 5,
-    padding: 8,
   },
 });
 
+const App = () => {
+  return (
+    <PaperProvider>
+      <Login />
+    </PaperProvider>
+  );
+};
 
-export default Login;
+export default App;
